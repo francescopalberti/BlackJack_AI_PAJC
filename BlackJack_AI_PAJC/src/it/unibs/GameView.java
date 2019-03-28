@@ -45,8 +45,7 @@ public class GameView extends JFrame {
 	private JLabel lblAiCrntBalnc;
 	private JLabel lblPlyBalanceAmount;
 	private JLabel lblAiBalanceAmount;
-	private JLabel lblDealer;
-	private JLabel lblPlayer;
+	
 	private JButton btnHit;
 	private JButton btnStand;
 	private JLabel lblInfo;
@@ -73,91 +72,54 @@ public class GameView extends JFrame {
     	initGuiObjects();
     }	 // end Client constructor
     
-    // This function runs when the program starts or when the game ends. It displays the initial GUI objects to enter an initial balance and start/stop a game
- 	public void initGuiObjects() {
- 		
- 		lblInitBalanceValue = new JLabel(String.format("$%d", Constraint.START_MONEY)); // Text field to store initial balance
- 		lblInitBalanceValue.setBounds(131, 280, 89, 28);
+    public void startupGuiObject() {
+    	lblInitBalanceValue.setBounds(131, 280, 89, 28);
  		lblInitBalanceValue.setForeground(Color.WHITE);
  		frame.getContentPane().add(lblInitBalanceValue);
  		
- 		lblInitialBalance = new JLabel("Initial Balance:"); // Initial balance label
  		lblInitialBalance.setFont(new Font("Arial", Font.BOLD, 13));
  		lblInitialBalance.setForeground(Color.GRAY);
  		lblInitialBalance.setBounds(30, 286, 100, 16);
  		frame.getContentPane().add(lblInitialBalance);
  		
- 		lblPlayerCrntBalnc = new JLabel("Your Current Balance"); // Current balance label
- 		lblPlyBalanceAmount = new JLabel(); // Balance label, shows current balance
- 		
- 		lblAiCrntBalnc = new JLabel("AI Current Balance"); // Current balance label
- 		lblAiBalanceAmount = new JLabel(); // Balance label, shows current balance
- 		
- 		
- 		lblDealer = new JLabel("Dealer"); // Dealer label
- 		lblPlayer = new JLabel("Player"); // Player label
- 		
- 		btnBet = new JButton("Bet"); // Deal button
  		btnBet.setIcon(new ImageIcon("resources\\buttons\\btn_bet.png"));
- 		btnBet.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				getBet();
-			}
-		});
+ 		btnBet.setEnabled(true);
+ 		btnBet.setVisible(true);
+ 		
  		btnBet.setBounds(1100, 625, 150, 35);
  		frame.getContentPane().add(btnBet);
  		
- 		btnHit = new JButton("Hit"); // Hit button
  		btnHit.setIcon(new ImageIcon("resources\\buttons\\btn_hit.png"));
- 		btnHit.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				controller.playerHit();; // When pressed, hit
-			}
-		});
+ 		btnHit.setEnabled(false);
+ 		btnHit.setVisible(false);
+ 		
  		btnHit.setBounds(1050, 570, 160, 35);
  		frame.getContentPane().add(btnHit);
  		
  		initChip();
  		
-			
- 		btnStand = new JButton("Stand"); // Stand button
  		btnStand.setIcon(new ImageIcon("resources\\buttons\\btn_stand.png"));
- 		btnStand.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				controller.playerStay(); // When pressed, stand
-			}
-		});
+ 		btnStand.setEnabled(false);
+ 		btnStand.setVisible(false);
+ 		
  		btnStand.setBounds(1050, 625, 160, 35);
  		frame.getContentPane().add(btnStand);
-		
- 		btnContinue = new JButton("Continue"); // When the final outcome is reached, press this to accept and continue the game
+ 		
+ 		btnContinue.setIcon(new ImageIcon("resources\\buttons\\btn_continua.png"));
  		btnContinue.setEnabled(false);
 		btnContinue.setVisible(false);
-		btnContinue.setBounds(290, 444, 320, 35);
-		btnContinue.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				acceptOutcome();
-			}
-		});	
- 		
+		btnContinue.setBounds(480, 280, 300, 35);
 		
-		frame.getContentPane().add(btnContinue);
+ 		frame.getContentPane().add(btnContinue);
  		
- 		btnEndGame = new JButton("End Game"); // End game button, this removes all GUI objects and starts from scratch
+ 		btnEndGame.setIcon(new ImageIcon("resources\\buttons\\btn_esci.png"));
  		btnEndGame.setEnabled(false);
  		btnEndGame.setVisible(false);
- 		btnEndGame.setBounds(221, 610, 99, 50);
- 		btnEndGame.addActionListener(new ActionListener() {
- 			public void actionPerformed(ActionEvent e) {
- 				frame.getContentPane().removeAll(); // Remove all objects from screen
- 				frame.repaint(); // Repaint to show update
- 				controller.endGame(); 
- 			}
- 		});
+ 		btnEndGame.setBounds(480, 320, 300, 35);
+ 		
  		frame.getContentPane().add(btnEndGame);
  		
- 		lblInfo = new JLabel("Welcome!"); // Deal info label
-		lblInfo.setBackground(Color.ORANGE);
+ 		lblInfo.setBackground(Color.ORANGE);
 		lblInfo.setOpaque(false);
 		lblInfo.setForeground(Color.ORANGE);
 		lblInfo.setFont(new Font("Arial", Font.BOLD, 16));
@@ -165,7 +127,6 @@ public class GameView extends JFrame {
 		lblInfo.setBounds(50, 620, 320, 28);
 		frame.getContentPane().add(lblInfo);
 		
-		lblInfoAi = new JLabel("Welcome! I'm AI"); // Deal info label
 		lblInfoAi.setBackground(Color.CYAN);
 		lblInfoAi.setOpaque(false);
 		lblInfoAi.setForeground(Color.CYAN);
@@ -174,27 +135,24 @@ public class GameView extends JFrame {
 		lblInfoAi.setBounds(50, 650, 320, 28);
 		frame.getContentPane().add(lblInfoAi);
 		
-		lblPlyBalanceAmount.setText(String.format("$%d", Constraint.START_MONEY));
 		lblPlyBalanceAmount.setForeground(Color.ORANGE);
 		lblPlyBalanceAmount.setFont(new Font("Arial", Font.BOLD, 40));
 		lblPlyBalanceAmount.setHorizontalAlignment(SwingConstants.CENTER);
 		lblPlyBalanceAmount.setBounds(400, 632, 272, 50);
 		frame.getContentPane().add(lblPlyBalanceAmount);
 		
-		lblAiBalanceAmount.setText(String.format("$%d", Constraint.START_MONEY));
 		lblAiBalanceAmount.setForeground(Color.ORANGE);
 		lblAiBalanceAmount.setFont(new Font("Arial", Font.BOLD, 40));
 		lblAiBalanceAmount.setHorizontalAlignment(SwingConstants.CENTER);
 		lblAiBalanceAmount.setBounds(580, 632, 272, 50);
 		frame.getContentPane().add(lblAiBalanceAmount);
 		
- 		lblBetAmount = new JLabel(String.format("$%d", 0)); // Bet amount info label
 		lblBetAmount.setFont(new Font("Arial", Font.BOLD, 40));
 		lblBetAmount.setForeground(Color.WHITE);
 		lblBetAmount.setBounds(30, 320, 100, 60);
 		frame.getContentPane().add(lblBetAmount);
- 		
- 		lblPlayerCrntBalnc.setHorizontalAlignment(SwingConstants.CENTER);
+		
+		lblPlayerCrntBalnc.setHorizontalAlignment(SwingConstants.CENTER);
 		lblPlayerCrntBalnc.setFont(new Font("Arial", Font.BOLD, 16));
 		lblPlayerCrntBalnc.setForeground(Color.WHITE);
 		lblPlayerCrntBalnc.setBounds(400, 615, 272, 22);
@@ -205,12 +163,74 @@ public class GameView extends JFrame {
 		lblAiCrntBalnc.setForeground(Color.WHITE);
 		lblAiCrntBalnc.setBounds(580, 615, 272, 22);
 		frame.getContentPane().add(lblAiCrntBalnc);
+    }
+    
+    // This function runs when the program starts or when the game ends. It displays the initial GUI objects to enter an initial balance and start/stop a game
+ 	public void initGuiObjects() {
+ 		
+ 		lblInitBalanceValue = new JLabel(String.format("$%d", Constraint.START_MONEY)); // Text field to store initial balance
+ 		
+ 		
+ 		lblInitialBalance = new JLabel("Initial Balance:"); // Initial balance label
+ 		
+ 		
+ 		lblPlayerCrntBalnc = new JLabel("Your Current Balance"); // Current balance label
+ 		lblPlyBalanceAmount = new JLabel(); // Balance label, shows current balance
+ 		
+ 		lblAiCrntBalnc = new JLabel("AI Current Balance"); // Current balance label
+ 		lblAiBalanceAmount = new JLabel(); // Balance label, shows current balance
+ 		
+ 		btnBet = new JButton("Bet"); // Deal button
+ 		btnBet.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				getBet();
+			}
+		});
+ 		
+ 		btnHit = new JButton("Hit"); // Hit button
+ 		btnHit.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				controller.playerHit();; // When pressed, hit
+			}
+		});
+ 		btnStand = new JButton("Stand"); // Stand button
+ 		btnStand.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				controller.playerStay(); // When pressed, stand
+			}
+		});
+ 		btnContinue = new JButton("Continue"); // When the final outcome is reached, press this to accept and continue the game
+ 		btnContinue.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				acceptOutcome();
+			}
+		});	
+ 		
+ 		btnEndGame = new JButton("End Game"); // End game button, this removes all GUI objects and starts from scratch
+ 		btnEndGame.addActionListener(new ActionListener() {
+ 			public void actionPerformed(ActionEvent e) {
+ 				System.exit(0);
+ 			}
+ 		});
+ 		
+ 		lblInfo = new JLabel("Welcome!"); // Deal info label
+		lblInfoAi = new JLabel("Welcome! I'm AI"); // Deal info label
+		
+		
+		lblPlyBalanceAmount.setText(String.format("$%d", Constraint.START_MONEY));
+		
+		
+		lblAiBalanceAmount.setText(String.format("$%d", Constraint.START_MONEY));
+		
+		
+ 		lblBetAmount = new JLabel(String.format("$%d", 0)); // Bet amount info label
+		
+ 		
+ 		
  	}
  	
  	
  	private void initChip() {
- 		
- 		
  		btn1 = new JButton("1"); // Stand button
  		btn1.setIcon(new ImageIcon("resources\\chip\\1_chip.png"));
  		btn1.addActionListener(new ActionListener() {
@@ -283,25 +303,12 @@ public class GameView extends JFrame {
      */
  	
  	public void showBetGui() { 
+ 		startupGuiObject();
  		betAmount=0;
+ 		refreshCurrentBet(0);
  		
- 		btnHit.setEnabled(false);
- 		btnHit.setVisible(false);
- 		
- 		btnStand.setEnabled(false);
- 		btnStand.setVisible(false);
- 		
- 		btnBet.setEnabled(true);
- 		btnBet.setVisible(true);
-		
-		lblInfo.setText("Please enter a bet and click Deal");
-		
-		
+		lblInfo.setText("Please enter a bet and click Bet!");
 		lblInfoAi.setText("I'm calculating the bet");
-		
-
-		btnBet.setEnabled(true);
-		
 		
 		frame.repaint();
  	}
@@ -343,17 +350,6 @@ public class GameView extends JFrame {
  		btnBet.setEnabled(false);
  		btnBet.setVisible(false);
  		removeChip();
-		
-		lblDealer.setForeground(Color.WHITE);
-		lblDealer.setFont(new Font("Arial Black", Font.BOLD, 20));
-		lblDealer.setBounds(415, 158, 82, 28);
-		frame.getContentPane().add(lblDealer);
-
-		
-		lblPlayer.setForeground(Color.WHITE);
-		lblPlayer.setFont(new Font("Arial Black", Font.BOLD, 20));
-		lblPlayer.setBounds(415, 266, 82, 28);
-		frame.getContentPane().add(lblPlayer);
 
 		lblInfo.setText("Cards dealt"); 
 		frame.repaint(); 
@@ -385,17 +381,17 @@ public class GameView extends JFrame {
 		}
 		// Create and display two panels
 		if(dealerCards!=null) {
-			dealerCardPanel = new CardGroupPanel(dealerCards, 580 - (dealerCards.getCount() * 40), 50, 70, 104, 10);
+			dealerCardPanel = new CardGroupPanel(dealerCards, 600 - (dealerCards.getCount() * 40), 50, 70, 104, 10);
 			frame.getContentPane().add(dealerCardPanel);
 		}
 		if(playerCards!=null) {
-			playerCardPanel = new CardGroupPanel(playerCards, 350 - (playerCards.getCount() * 40), 300, 70, 104, 10);
+			playerCardPanel = new CardGroupPanel(playerCards, 350 - (playerCards.getCount() * 40), 400, 70, 104, 10);
 			playerCardPanel.showScoreLbl();
 			frame.getContentPane().add(playerCardPanel);
 		}
 		
 		if(aiPlayerCards!=null) {
-			aiPlayerCardPanel = new CardGroupPanel(aiPlayerCards, 790 - (aiPlayerCards.getCount() * 40), 300, 70, 104, 10);
+			aiPlayerCardPanel = new CardGroupPanel(aiPlayerCards, 790 - (aiPlayerCards.getCount() * 40), 400, 70, 104, 10);
 			aiPlayerCardPanel.showScoreLbl();
 			frame.getContentPane().add(aiPlayerCardPanel);
 		}
@@ -426,7 +422,6 @@ public class GameView extends JFrame {
  	public void playerBusted() { 
  		btnHit.setEnabled(false);
  		btnStand.setEnabled(false);
- 		lblInfo.setBackground(Color.CYAN);
  		lblInfo.setText("You BUSTED! Please Wait other players..."); 
  		lblInfoAi.setText("Is my turn, I'm running the probability...");
 		frame.repaint();
@@ -446,7 +441,6 @@ public class GameView extends JFrame {
  	public void playerStand() { 
  		btnHit.setEnabled(false);
  		btnStand.setEnabled(false);
- 		lblInfo.setBackground(Color.CYAN);
  		lblInfo.setText("You Stand! Please Wait other players..."); 
  		lblInfoAi.setText("Is my turn, I'm running the probability...");
 		frame.repaint();
@@ -461,23 +455,38 @@ public class GameView extends JFrame {
 
  	public void playerTie() {
  		lblInfo.setText("You Tie!"); 
-		outcomeHappened();
  		frame.repaint();
 	}
 
 	public void playerWin() {
 		lblInfo.setText("You Won!"); 
-		outcomeHappened();
 		frame.repaint();
 	}
 	
 	
 
 	public void playerLose() {
-		lblInfo.setText("You Lose!"); 
-		outcomeHappened();
+		lblInfo.setText("You Lose!");
 		frame.repaint();
 	}	
+	
+
+	public void aiWin() {
+		lblInfoAi.setText("I Won!"); 
+		outcomeHappened();
+ 		frame.repaint();
+	}
+	public void aiLose() {
+		lblInfoAi.setText("I Lose!"); 
+		outcomeHappened();
+ 		frame.repaint();
+	}
+	
+	public void aiTie() {
+		lblInfoAi.setText("I Tie!"); 
+		outcomeHappened();
+ 		frame.repaint();
+	}
 	
 	public void playerBlackJack() {
 		lblInfo.setText("You Have a BlackJack!!"); 
@@ -510,26 +519,18 @@ public class GameView extends JFrame {
 	}
 
 	public void acceptOutcome() { // When outcome is reached
-
-		lblInfo.setOpaque(false);
-		lblInfo.setForeground(Color.ORANGE);
-		
-		// Remove deal objects
-		
 		frame.getContentPane().removeAll(); // Remove all objects from screen, restart the game
-
+		controller.playBlackJack();
 	}
 	
-	public void gameIsFinished() {
+	public void playerFinishedMoney() {
 		
 			int choice = JOptionPane.showOptionDialog(null, "You have run out of funds. Press Yes to add $100, or No to end the current game.", "Out of funds", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, null);
 
 			if (choice == JOptionPane.YES_OPTION) {
 				lblPlyBalanceAmount.setText(String.format("$%d", Constraint.START_MONEY));
 			} else {
-				frame.getContentPane().removeAll();
-				frame.repaint();
-				return;
+				controller.playBlackJack();
 			}
 		
 	}
@@ -538,6 +539,14 @@ public class GameView extends JFrame {
 	public static int heightFromWidth(int width) { // 500x726 original size, helper function to get height proportional to width
 		return (int) (1f * width * (380f / 255f));
 	}
+
+	
+	public void aiLoseGame() {
+		//mostra messaggio di sconfitta
+	}
+
+	
+	
 	
 
 	

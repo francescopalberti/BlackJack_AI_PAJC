@@ -27,7 +27,7 @@ public class AIPlayer extends Player {
                     return 0;
                 }
                 
-                if(CheckBust()) {
+                if(checkBust()) {
                     return 0;
                 }
                 if(level == Constraint.EASY){

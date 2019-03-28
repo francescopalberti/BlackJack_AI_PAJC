@@ -1,5 +1,6 @@
 package it.unibs;
 
+import java.util.Iterator;
 import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -39,7 +40,6 @@ public class GameController {
     	dealer = new Dealer();
     	human = new Player("You", Constraint.START_MONEY);
         ai1 = new AIPlayer("Computer", Constraint.EASY, Constraint.START_MONEY);
-    	deck = new Deck();
     	players = new Vector<Player>();
     	players.add(human);
         players.add(ai1);
@@ -48,8 +48,17 @@ public class GameController {
     
     
     
-    private void playBlackJack() {
-    	askBets(); 
+    public void playBlackJack() {
+    	deck = new Deck();
+    	if (human.isRunOutFunds()) {
+			gui.playerFinishedMoney();
+		}
+    	else if(ai1.isRunOutFunds()) {
+    		gui.aiLoseGame();
+    	} else {
+    		askBets(); 
+    	}
+    	
 	}
 
 	/**
@@ -79,30 +88,29 @@ public class GameController {
      * @return amount to bet
      */
     public void calculateAndSetBet(int betAmount) {
-    human.setBet(betAmount);
-	int normalBet = previousBet;
+	    human.setBet(betAmount);
+		int normalBet = previousBet;
+		    
+	    if (level == Constraint.EASY) {
+	        int rand = rnd.nextInt(3);                              
+	        if (previousOutcome == Constraint.LOSS)  normalBet -= Constraint.MIN_BET * rand;                             
+	        else if (previousOutcome == Constraint.WIN) normalBet += Constraint.MIN_BET * rand;                             
+	    }
+	    else if (level == Constraint.HARD) {
+	        int optimal = Constraint.MIN_BET*(betAmount);
+	        normalBet = optimal;
+	    }
 	    
-    if (level == Constraint.EASY) {
-        int rand = rnd.nextInt(3);                              
-        if (previousOutcome == Constraint.LOSS)  normalBet -= Constraint.MIN_BET * rand;                             
-        else if (previousOutcome == Constraint.PUSH);
-        else if (previousOutcome == Constraint.WIN) normalBet += Constraint.MIN_BET * rand;                             
-    }
-    else if (level == Constraint.HARD) {
-        int optimal = Constraint.MIN_BET*(betAmount);
-        normalBet = optimal;
-    }
-    
-    if (normalBet > ai1.getBalance() / 20) normalBet = ai1.getBalance()/20;                   
-    if (normalBet < Constraint.MIN_BET) normalBet = Constraint.MIN_BET;
-    
-    previousBet = normalBet;
-	ai1.setBet(normalBet);
-	
-	gui.refreshCurrentAmount(human.getBalance()-betAmount,ai1.getBalance()-normalBet);
-	gui.allBetPlaced();
-	
-	deal();
+	    if (normalBet > ai1.getBalance() / 20) normalBet = ai1.getBalance()/20;                   
+	    if (normalBet < Constraint.MIN_BET) normalBet = Constraint.MIN_BET;
+	    
+	    previousBet = normalBet;
+		ai1.setBet(normalBet);
+		
+		gui.refreshCurrentAmount(human.getBalance()-betAmount,ai1.getBalance()-normalBet);
+		gui.allBetPlaced();
+		
+		deal();
     }
     
     /*
@@ -154,7 +162,7 @@ public class GameController {
     public void playerHit() {
 		giveCard(this.human);
 		refreshGUICard();
-		if(human.CheckBust()) {			//if player busted
+		if(human.checkBust()) {			//if player busted
 			doAITurns();
 			gui.playerBusted();
 		}
@@ -224,60 +232,74 @@ public class GameController {
 			}
 		}
     	gui.dealerFinishedTurn();
-    	endGame();
+    	for (Player player : players) {
+			getResults(player);
+		}
+    	
    }
 
-	public void endGame() {
+	public void getResults(Player player) {
 		
-		if (human.hasABJ()) {
-			human.refreshBalance("BJ");
+		if (player.hasABJ()) {
+			player.refreshBalance("BJ");
 			gui.playerBlackJack();
 		} else {
-			if( (dealer.getCardTotal() <= 21) && (human.getCardTotal() <= 21 ) ){
+			if( (dealer.getCardTotal() <= 21) && (player.getCardTotal() <= 21 ) ){
 
-				if (dealer.getCardTotal() > human.getCardTotal()) {
-					playerLose();
+				if (dealer.getCardTotal() > player.getCardTotal()) {
+					playerLose(player);
 					}
 
-				if (dealer.getCardTotal() < human.getCardTotal()) {
-					playerWon();
+				if (dealer.getCardTotal() < player.getCardTotal()) {
+					playerWon(player);
 				}
 
-				if (dealer.getCardTotal() == human.getCardTotal()) {
-					playerTie();
+				if (dealer.getCardTotal() == player.getCardTotal()) {
+					playerTie(player);
 				}				
 
 			}//end if statement when dealer and player are under 21
 
-			if(dealer.CheckBust()){
+			if(dealer.checkBust()){
 				
-				if(human.CheckBust()){
-					playerTie();
+				if(player.checkBust()){
+					playerTie(player);
 				}
-				if(human.getCardTotal() <= 21){
-					playerWon();
+				if(player.getCardTotal() <= 21){
+					playerWon(player);
 				}
 				
 			}//end if statement when dealer busted
 
-			if(human.CheckBust() && dealer.getCardTotal() <= 21){
-				playerLose();
+			if(player.checkBust() && dealer.getCardTotal() <= 21){
+				playerLose(player);
 			}//end if statement when player busted
 		}
+		
+		
+		
 	}
 	
-	private void playerLose() {
-		human.refreshBalance("LOSE");
-		gui.playerLose();
+	private void playerLose(Player player) {
+		
+		player.refreshBalance("LOSE");
+		if(player.getClass()==Player.class) gui.playerLose();
+		if(player.getClass()==AIPlayer.class) gui.aiLose(); previousOutcome=Constraint.LOSS;
+		gui.refreshCurrentAmount(human.getBalance(), ai1.getBalance());
 	}
 	
-	private void playerWon() {
-		human.refreshBalance("WIN");
-		gui.playerWin();
+	private void playerWon(Player player) {
+		player.refreshBalance("WIN");
+		
+		if(player.getClass()==Player.class) gui.playerWin(); 
+		if(player.getClass()==AIPlayer.class) gui.aiWin(); previousOutcome=Constraint.WIN;
+		gui.refreshCurrentAmount(human.getBalance(), ai1.getBalance());
 	}
 	
-	private void playerTie() {
-		gui.playerTie();
+	private void playerTie(Player player) {
+		if(player.getClass()==Player.class) gui.playerTie();
+		if(player.getClass()==AIPlayer.class) gui.aiTie();
+		gui.refreshCurrentAmount(human.getBalance(), ai1.getBalance());
 	}
 	
 		

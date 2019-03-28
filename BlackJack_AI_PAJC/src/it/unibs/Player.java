@@ -89,6 +89,9 @@ public class Player {
 		handCards.add(ca);
 	}
 
+	public boolean isRunOutFunds() {
+		return balance == 0;
+	}
 	
 	/**
 	 * Returns whether or not the hand contains an ace.
@@ -107,7 +110,7 @@ public class Player {
 	 * @return true if the player bust
 	 */
 
-	public boolean CheckBust(){
+	public boolean checkBust(){
 		return handCards.CheckBust();
 	}
 	
