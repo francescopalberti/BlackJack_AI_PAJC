@@ -1,15 +1,17 @@
 package it.unibs;
 
-public class Dealer  extends Player {
+public class Dealer extends Player {
 
 	public Dealer() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
 
-	
-//sistenare
-	public void flipSecondCard() {
+	public void coverFirstCard() {
+		returnFirstHandCard().coverCard();
+	}
+
+	public void uncoverFirstCard() {
 		returnFirstHandCard().unCoverCard();
 	}
 
