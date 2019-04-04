@@ -167,7 +167,22 @@ public class GameLogic {
 			gui.playerBusted();
 		}
 	}
-	
+    
+    public void playerDoubleDown() {
+    	
+		if(human.checkDoubleDown()) {
+			human.doubleDown(deck.dealCard());
+			refreshGUICard();
+			gui.playerHasDoubleD();
+			doAITurns();
+			
+		}
+		else {
+			gui.playerCantDouble();
+		}
+		
+	}
+    
 	private void refreshGUICard() {
 		gui.updateCardPanels(dealer.getHandCards(), human.getHandCards(), ai1.getHandCards());
 		
@@ -308,6 +323,8 @@ public class GameLogic {
 		if(player.getClass()==AIPlayer.class) gui.aiTie();
 		gui.refreshCurrentAmount(human.getBalance(), ai1.getBalance());
 	}
+
+	
 	
 		
 	

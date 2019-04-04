@@ -9,14 +9,10 @@ import java.util.TimerTask;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JTextArea;
 import javax.swing.SwingConstants;
-import javax.swing.SwingUtilities;
 
 
 /**
@@ -47,6 +43,8 @@ public class GameView extends JFrame {
 	
 	private JButton btnHit;
 	private JButton btnStand;
+	private JButton btnDoubleDown;
+
 	private JLabel lblInfo;
 	private JLabel lblInfoAi;
 	private JButton btnContinue;
@@ -96,7 +94,12 @@ public class GameView extends JFrame {
  		btnHit.setBounds(1050, 570, 160, 35);
  		frame.getContentPane().add(btnHit);
  		
+ 		btnDoubleDown.setIcon(new ImageIcon("resources\\buttons\\btn_doubleD.png"));
+ 		btnDoubleDown.setEnabled(false);
+ 		btnDoubleDown.setVisible(false);
  		
+ 		btnDoubleDown.setBounds(1050, 515, 160, 35);
+ 		frame.getContentPane().add(btnDoubleDown);
  		
  		btnStand.setIcon(new ImageIcon("resources\\buttons\\btn_stand.png"));
  		btnStand.setEnabled(false);
@@ -191,7 +194,13 @@ public class GameView extends JFrame {
  		btnHit = new JButton("Hit"); // Hit button
  		btnHit.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				controller.playerHit();; // When pressed, hit
+				controller.playerHit(); // When pressed, hit
+			}
+		});
+ 		btnDoubleDown = new JButton("Double Down"); 
+ 		btnDoubleDown.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				controller.playerDoubleDown(); 
 			}
 		});
  		btnStand = new JButton("Stand"); // Stand button
@@ -334,6 +343,11 @@ public class GameView extends JFrame {
 		return;
  	}
  	
+ 	public void playerCantDouble() {
+ 		lblInfo.setText("Error: You Can't Double Down!"); // Give an error
+	}
+
+ 	
  	public void refreshCurrentAmount(int playerBalance, int aiBalance) {
  		lblAiBalanceAmount.setText(String.format("$%d", aiBalance)); 		
  		lblPlyBalanceAmount.setText(String.format("$%d", playerBalance));
@@ -409,26 +423,44 @@ public class GameView extends JFrame {
      */
     
  	public void isPlayerTurn() { 
- 		btnStand.setVisible(true);
-		btnStand.setEnabled(true);
- 		btnHit.setEnabled(true);
- 		btnHit.setVisible(true);
+ 		setActionButtonVisible();
  		lblInfo.setText("Is your turn!"); 
 		frame.repaint();
 	}
  	
- 	/**
+ 	private void setActionButtonVisible() {
+ 		btnStand.setVisible(true);
+		btnStand.setEnabled(true);
+		btnDoubleDown.setVisible(true);
+		btnDoubleDown.setEnabled(true);
+ 		btnHit.setEnabled(true);
+ 		btnHit.setVisible(true);
+	}
+ 	
+ 	private void disableActionButton() {
+ 		btnStand.setEnabled(false);
+		btnDoubleDown.setEnabled(false);
+ 		btnHit.setEnabled(false);
+ 	}
+
+	/**
      * 
      *
      */
  	
  	public void playerBusted() { 
- 		btnHit.setEnabled(false);
- 		btnStand.setEnabled(false);
- 		lblInfo.setText("You BUSTED! Please Wait other players..."); 
+ 		disableActionButton();
+ 		lblInfo.setText("You BUSTED! Please Wait..."); 
  		lblInfoAi.setText("Is my turn, I'm running the probability...");
 		frame.repaint();
 
+	}
+ 	
+ 	public void playerHasDoubleD() {
+ 		disableActionButton();
+ 		lblInfo.setText("You Double Down! Please Wait..."); 
+ 		lblInfoAi.setText("Is my turn, I'm running the probability...");
+		frame.repaint();
 	}
  	
  	public void aiHitACard() {
@@ -442,8 +474,7 @@ public class GameView extends JFrame {
 	}
  	
  	public void playerStand() { 
- 		btnHit.setEnabled(false);
- 		btnStand.setEnabled(false);
+ 		disableActionButton();
  		lblInfo.setText("You Stand! Please Wait other players..."); 
  		lblInfoAi.setText("Is my turn, I'm running the probability...");
 		frame.repaint();
@@ -502,8 +533,7 @@ public class GameView extends JFrame {
 	}
 	public void outcomeHappened() { //If something's happened, this round is over. Show the results of round and Continue button
 		
-		btnHit.setEnabled(false);
-		btnStand.setEnabled(false);
+		disableActionButton();
 
 		// Fancy effects, highlight info label orange and delay the display of Continue button by 500ms
 		lblInfo.setOpaque(true);
@@ -548,6 +578,9 @@ public class GameView extends JFrame {
 		//mostra messaggio di sconfitta
 	}
 
+	
+
+	
 	
 	
 	

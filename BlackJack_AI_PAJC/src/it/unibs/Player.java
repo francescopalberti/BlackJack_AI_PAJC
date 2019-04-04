@@ -88,7 +88,29 @@ public class Player {
 	public void CardHit(Card ca){
 		handCards.add(ca);
 	}
+	
+	public void doubleDown(Card ca){
+		handCards.add(ca);
+		bet=getDoubleBet();
+	}
+	
+	private int getDoubleBet() {
+		return bet*2;
+	}
 
+
+	/**
+	 * Verifica che sia possibile o meno il raddoppio
+	 *
+	 * @return vero o falso
+	 */	
+	public boolean checkDoubleDown() {
+		if(!(getBalance()>getDoubleBet())) return false;
+		if(!(handCards.blackJackValue()>8 && handCards.blackJackValue()<16) ) return false;
+		return true;
+	}
+
+	
 	public boolean isRunOutFunds() {
 		return balance == 0;
 	}
@@ -155,4 +177,7 @@ public class Player {
 		// TODO Auto-generated method stub
 		return null;
 	}
+	
+	
+
 }
