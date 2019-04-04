@@ -18,7 +18,7 @@ import java.util.Vector;
  * @author Francesco Palberti, Enrico Zaninelli
  */
 
-public class GameController {
+public class GameLogic {
 	private GameView gui;
 	private Player human;
     private AIPlayer ai1;
@@ -32,14 +32,14 @@ public class GameController {
 	private int previousOutcome;
 	private int level;
 	
-    public GameController() {
+    public GameLogic() {
     	gui = new GameView(this);
     }
     
     public void startBlackJack() {
     	dealer = new Dealer();
     	human = new Player("You", Constraint.START_MONEY);
-        ai1 = new AIPlayer("Computer", Constraint.EASY, Constraint.START_MONEY);
+        ai1 = new AIPlayer("Computer", Constraint.HARD, Constraint.START_MONEY);
     	players = new Vector<Player>();
     	players.add(human);
         players.add(ai1);
@@ -196,7 +196,7 @@ public class GameController {
 		}, 5000);
             
     }
-	
+    
 
     /**
      * Processes the AI's actions
@@ -213,6 +213,13 @@ public class GameController {
                     case 1: 
                     	giveCard(ai); 
                     	gui.aiHitACard();
+                    	new Timer().schedule(new TimerTask() {
+                    		@Override
+                    		public void run() {
+                    	
+                            refreshGUICard();
+                    		}
+                    	}, 5000);
                     	return true;
                     default: return false;
             }

@@ -43,7 +43,7 @@ public class MainForm {
 				JButton btnStartGame = new JButton();      		
 				btnStartGame.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
-						GameController application = new GameController(); 
+						GameLogic application = new GameLogic(); 
 						application.startBlackJack(); 
 						frame.setVisible(false);
 					}

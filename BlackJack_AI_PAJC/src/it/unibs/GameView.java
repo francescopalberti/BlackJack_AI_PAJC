@@ -26,7 +26,7 @@ import javax.swing.SwingUtilities;
  */
 
 public class GameView extends JFrame {
-	private GameController controller; // client GUI controller
+	private GameLogic controller; // client GUI controller
 	private JFrame frame; // Creating an instance of the MainFrame class.
 
 	//the panels for the player's dealer's cards and ai' cards
@@ -34,7 +34,6 @@ public class GameView extends JFrame {
 	private CardGroupPanel playerCardPanel = null;  
 	private CardGroupPanel aiPlayerCardPanel = null;
 	
-	// Creating the GUI elements in the window builder
 	private JLabel lblInitBalanceValue;
 	private JLabel lblInitialBalance;
 
@@ -58,17 +57,18 @@ public class GameView extends JFrame {
 	private JButton btn25;
 	private JButton btn100;
 	
-	int betAmount;
+	private int betAmount;
+	
 	/**
      * Constructor for GUI object. Set up GUI
      *
      * @param aController. Client controller
      */
 	
-    public GameView(GameController gameController) {
+    public GameView(GameLogic gameLogic) {
     	frame = new GameFrame();
     	frame.setVisible(true);
-    	this.controller = gameController;
+    	this.controller = gameLogic;
     	initGuiObjects();
     }	 // end Client constructor
     
@@ -96,7 +96,7 @@ public class GameView extends JFrame {
  		btnHit.setBounds(1050, 570, 160, 35);
  		frame.getContentPane().add(btnHit);
  		
- 		initChip();
+ 		
  		
  		btnStand.setIcon(new ImageIcon("resources\\buttons\\btn_stand.png"));
  		btnStand.setEnabled(false);
@@ -163,11 +163,12 @@ public class GameView extends JFrame {
 		lblAiCrntBalnc.setForeground(Color.WHITE);
 		lblAiCrntBalnc.setBounds(580, 615, 272, 22);
 		frame.getContentPane().add(lblAiCrntBalnc);
+		
+		initChip();
     }
     
     // This function runs when the program starts or when the game ends. It displays the initial GUI objects to enter an initial balance and start/stop a game
  	public void initGuiObjects() {
- 		
  		lblInitBalanceValue = new JLabel(String.format("$%d", Constraint.START_MONEY)); // Text field to store initial balance
  		
  		
@@ -318,7 +319,11 @@ public class GameView extends JFrame {
      *
      */
  	
- 	public void getBet() {
+ 	private void getBet() {
+ 		if(betAmount==0) {
+ 			lblInfo.setText("Error: Bet can't be 0!"); 
+ 			return; // Give an error
+ 		}
  		controller.checkBet(betAmount);
 	}
  	
@@ -352,8 +357,6 @@ public class GameView extends JFrame {
  		removeChip();
 
 		lblInfo.setText("Cards dealt"); 
-		frame.repaint(); 
-		
 		lblInfoAi.setText("Cards dealt"); 
 		frame.repaint(); 
 		
