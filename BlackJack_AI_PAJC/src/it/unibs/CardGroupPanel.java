@@ -21,29 +21,31 @@ public class CardGroupPanel extends JPanel{
 	private int numCards;
 	private static final String coveredCard_URL = "resources\\cardImages\\backCover.png";
 	private int total;
-	private int height, left, top, width, gap;
+	private int height, width, gap;
 	CardGroup cardGroup;
 	JLabel playerScoreLbl;
 	
-	
-	
-	public CardGroupPanel(CardGroup cardGroup, int left, int top, int width, int height, int gap) {
+	public CardGroupPanel() {
+		setVisible(false);
+		setLayout(null);
+		setOpaque(false); // for transparent background
+	}
+
+	public void refreshCardGroupPanel(CardGroup cardGroup, int left, int top, int width, int height, int gap) {
+		removeCards();
+		setVisible(true);
 		this.height = height;
-		this.left = left;
-		this.top = top;
 		this.width = width;
 		this.gap = gap;
 		this.cardGroup = cardGroup;
-		setLayout(null);
-		setOpaque(false); // for transparent background
-		refreshCardGroupPanel();
-	}
-
-	private void refreshCardGroupPanel() {
 		numCards = cardGroup.getCount();
 		setBounds(left, top, 35 + numCards * (width + gap), height);
 		initScoreLbl();
 		for (int i = 0; i < numCards; i++) add(madeCardPanel(i));
+	}
+	
+	private void removeCards() {
+		removeAll();
 	}
 
 	private ImagePanel madeCardPanel(int i) {

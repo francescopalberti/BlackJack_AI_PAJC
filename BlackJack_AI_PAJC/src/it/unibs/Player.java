@@ -139,7 +139,7 @@ public class Player {
 	/**
 	 * Returns first card
 	 *
-	 * @return true if the player bust
+	 * @return the first card in the hand
 	 */
 
 	public Card returnFirstHandCard(){

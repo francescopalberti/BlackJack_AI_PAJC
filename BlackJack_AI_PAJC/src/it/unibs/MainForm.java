@@ -44,7 +44,7 @@ public class MainForm {
 				btnStartGame.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
 						GameLogic application = new GameLogic(); 
-						application.startBlackJack(); 
+						application.startNewBlackJack(); 
 						frame.setVisible(false);
 					}
 				});

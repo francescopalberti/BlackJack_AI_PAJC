@@ -36,7 +36,7 @@ public class GameLogic {
     	gui = new GameView(this);
     }
     
-    public void startBlackJack() {
+    public void startNewBlackJack() {
     	dealer = new Dealer();
     	human = new Player("You", Constraint.START_MONEY);
         ai1 = new AIPlayer("Computer", Constraint.HARD, Constraint.START_MONEY);
@@ -205,7 +205,8 @@ public class GameLogic {
             do {
             	aiAction = ai1.askComputerAction(dealer.returnFirstHandCard());
             } while (parseAIActions(ai1, aiAction) == true);
-            refreshGUICard();
+            
+            gui.aiFinished();
             doDealerTurn();
 			}
 		}, 5000);
@@ -223,21 +224,18 @@ public class GameLogic {
     private boolean parseAIActions(Player ai, int action) {
             switch(action) {
                     case 0: 
-                    	gui.aiStand();
+                    	//gui.aiStand();
                     	return false;
                     case 1: 
                     	giveCard(ai); 
-                    	gui.aiHitACard();
-                    	new Timer().schedule(new TimerTask() {
-                    		@Override
-                    		public void run() {
-                    	
-                            refreshGUICard();
-                    		}
-                    	}, 5000);
+                    	//gui.aiHitACard();
+                    	refreshGUICard();
                     	return true;
-                    default: return false;
+                    default: 
+                    	break;
+                    	
             }
+			return false;
     }
     
     /**
@@ -247,12 +245,14 @@ public class GameLogic {
     public void doDealerTurn() { 
     	
     	dealer.uncoverFirstCard();
+    	refreshGUICard();
     	if (dealer.getCardTotal() < 16){
 			while(dealer.getCardTotal() < 16){
 				giveCard(dealer);
 				refreshGUICard();
 			}
 		}
+    	
     	gui.dealerFinishedTurn();
     	for (Player player : players) {
 			getResults(player);
@@ -263,8 +263,7 @@ public class GameLogic {
 	public void getResults(Player player) {
 		
 		if (player.hasABJ()) {
-			player.refreshBalance("BJ");
-			gui.playerBlackJack();
+			playerBlackJack(player);
 		} else {
 			if( (dealer.getCardTotal() <= 21) && (player.getCardTotal() <= 21 ) ){
 
@@ -315,6 +314,14 @@ public class GameLogic {
 		
 		if(player.getClass()==Player.class) gui.playerWin(); 
 		if(player.getClass()==AIPlayer.class) gui.aiWin(); previousOutcome=Constraint.WIN;
+		gui.refreshCurrentAmount(human.getBalance(), ai1.getBalance());
+	}
+	
+	private void playerBlackJack(Player player) {
+		player.refreshBalance("BJ");
+		
+		if(player.getClass()==Player.class) gui.playerBlackJack(); 
+		if(player.getClass()==AIPlayer.class) gui.aiBlackJack(); previousOutcome=Constraint.WIN;
 		gui.refreshCurrentAmount(human.getBalance(), ai1.getBalance());
 	}
 	

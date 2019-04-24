@@ -26,9 +26,9 @@ public class GameView extends JFrame {
 	private JFrame frame; // Creating an instance of the MainFrame class.
 
 	//the panels for the player's dealer's cards and ai' cards
-	private CardGroupPanel dealerCardPanel = null;
-	private CardGroupPanel playerCardPanel = null;  
-	private CardGroupPanel aiPlayerCardPanel = null;
+	private CardGroupPanel dealerCardPanel;
+	private CardGroupPanel playerCardPanel;  
+	private CardGroupPanel aiPlayerCardPanel;
 	
 	private JLabel lblInitBalanceValue;
 	private JLabel lblInitialBalance;
@@ -71,6 +71,7 @@ public class GameView extends JFrame {
     }	 // end Client constructor
     
     public void startupGuiObject() {
+    	
     	lblInitBalanceValue.setBounds(131, 280, 89, 28);
  		lblInitBalanceValue.setForeground(Color.WHITE);
  		frame.getContentPane().add(lblInitBalanceValue);
@@ -80,10 +81,16 @@ public class GameView extends JFrame {
  		lblInitialBalance.setBounds(30, 286, 100, 16);
  		frame.getContentPane().add(lblInitialBalance);
  		
+ 		dealerCardPanel.setVisible(false);
+ 		playerCardPanel.setVisible(false);
+ 		aiPlayerCardPanel.setVisible(false);
+ 		frame.getContentPane().add(dealerCardPanel);
+ 		frame.getContentPane().add(playerCardPanel);
+ 		frame.getContentPane().add(aiPlayerCardPanel);
+ 		
  		btnBet.setIcon(new ImageIcon("resources\\buttons\\btn_bet.png"));
  		btnBet.setEnabled(true);
  		btnBet.setVisible(true);
- 		
  		btnBet.setBounds(1100, 625, 150, 35);
  		frame.getContentPane().add(btnBet);
  		
@@ -111,15 +118,15 @@ public class GameView extends JFrame {
  		btnContinue.setIcon(new ImageIcon("resources\\buttons\\btn_continua.png"));
  		btnContinue.setEnabled(false);
 		btnContinue.setVisible(false);
-		btnContinue.setBounds(480, 280, 300, 35);
 		
- 		frame.getContentPane().add(btnContinue);
+		btnContinue.setBounds(480, 280, 300, 35);
+		frame.getContentPane().add(btnContinue);
  		
  		btnEndGame.setIcon(new ImageIcon("resources\\buttons\\btn_esci.png"));
  		btnEndGame.setEnabled(false);
  		btnEndGame.setVisible(false);
- 		btnEndGame.setBounds(480, 320, 300, 35);
  		
+ 		btnEndGame.setBounds(480, 320, 300, 35);
  		frame.getContentPane().add(btnEndGame);
  		
  		lblInfo.setBackground(Color.ORANGE);
@@ -166,14 +173,17 @@ public class GameView extends JFrame {
 		lblAiCrntBalnc.setForeground(Color.WHITE);
 		lblAiCrntBalnc.setBounds(580, 615, 272, 22);
 		frame.getContentPane().add(lblAiCrntBalnc);
-		
+				
 		initChip();
     }
     
     // This function runs when the program starts or when the game ends. It displays the initial GUI objects to enter an initial balance and start/stop a game
  	public void initGuiObjects() {
  		lblInitBalanceValue = new JLabel(String.format("$%d", Constraint.START_MONEY)); // Text field to store initial balance
- 		
+ 		dealerCardPanel = new CardGroupPanel();
+		playerCardPanel = new CardGroupPanel();
+		aiPlayerCardPanel = new CardGroupPanel();
+			
  		
  		lblInitialBalance = new JLabel("Initial Balance:"); // Initial balance label
  		
@@ -390,30 +400,12 @@ public class GameView extends JFrame {
      */
 
  	public void updateCardPanels(CardGroup dealerCards, CardGroup playerCards, CardGroup aiPlayerCards) 
- 	{
-		if (dealerCardPanel != null) { // If they're already added, remove them
-			frame.getContentPane().remove(dealerCardPanel);
-			frame.getContentPane().remove(playerCardPanel);
-			frame.getContentPane().remove(aiPlayerCardPanel);
-		}
-		// Create and display two panels
-		if(dealerCards!=null) {
-			dealerCardPanel = new CardGroupPanel(dealerCards, 600 - (dealerCards.getCount() * 40), 50, 70, 104, 10);
-			frame.getContentPane().add(dealerCardPanel);
-		}
-		if(playerCards!=null) {
-			playerCardPanel = new CardGroupPanel(playerCards, 350 - (playerCards.getCount() * 40), 400, 70, 104, 10);
-			playerCardPanel.showScoreLbl();
-			frame.getContentPane().add(playerCardPanel);
-		}
-		
-		if(aiPlayerCards!=null) {
-			aiPlayerCardPanel = new CardGroupPanel(aiPlayerCards, 790 - (aiPlayerCards.getCount() * 40), 400, 70, 104, 10);
-			aiPlayerCardPanel.showScoreLbl();
-			frame.getContentPane().add(aiPlayerCardPanel);
-		}
-		
-		
+ 	{		
+		dealerCardPanel.refreshCardGroupPanel(dealerCards, 600 - (dealerCards.getCount() * 40), 50, 70, 104, 10);
+		playerCardPanel.refreshCardGroupPanel(playerCards, 350 - (playerCards.getCount() * 40), 400, 70, 104, 10);
+		playerCardPanel.showScoreLbl();
+		aiPlayerCardPanel.refreshCardGroupPanel(aiPlayerCards, 790 - (aiPlayerCards.getCount() * 40), 400, 70, 104, 10);
+		aiPlayerCardPanel.showScoreLbl();
 		frame.repaint();
 	}
  	
@@ -472,6 +464,10 @@ public class GameView extends JFrame {
  		lblInfoAi.setText("I Stand!");
 		frame.repaint();
 	}
+ 	public void aiFinished() {
+ 		lblInfoAi.setText("I ended my turn!");
+		frame.repaint();
+	}
  	
  	public void playerStand() { 
  		disableActionButton();
@@ -504,6 +500,10 @@ public class GameView extends JFrame {
 		frame.repaint();
 	}	
 	
+	public void playerBlackJack() {
+		lblInfo.setText("You Have a BlackJack!!"); 
+		frame.repaint();
+	}
 
 	public void aiWin() {
 		lblInfoAi.setText("I Won!"); 
@@ -522,10 +522,10 @@ public class GameView extends JFrame {
  		frame.repaint();
 	}
 	
-	public void playerBlackJack() {
-		lblInfo.setText("You Have a BlackJack!!"); 
+	public void aiBlackJack() {
+		lblInfoAi.setText("I Have a BlackJack!!!"); 
 		outcomeHappened();
-		frame.repaint();
+ 		frame.repaint();
 	}
  	
 	public void updateBalance(int balance) {
@@ -577,6 +577,10 @@ public class GameView extends JFrame {
 	public void aiLoseGame() {
 		//mostra messaggio di sconfitta
 	}
+
+	
+
+	
 
 	
 
