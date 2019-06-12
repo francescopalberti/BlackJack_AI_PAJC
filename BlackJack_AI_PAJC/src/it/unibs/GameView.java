@@ -561,9 +561,11 @@ public class GameView extends JFrame {
 			int choice = JOptionPane.showOptionDialog(null, "You have run out of funds. Press Yes to add $100, or No to end the current game.", "Out of funds", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, null);
 
 			if (choice == JOptionPane.YES_OPTION) {
+				frame.getContentPane().removeAll();
+				controller.startNewBlackJack();
 				lblPlyBalanceAmount.setText(String.format("$%d", Constraint.START_MONEY));
 			} else {
-				controller.playBlackJack();
+				System.exit(0);
 			}
 		
 	}

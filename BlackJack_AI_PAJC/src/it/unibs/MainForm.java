@@ -58,7 +58,7 @@ public class MainForm {
 				
 				frame.addWindowListener(new WindowAdapter() {
 					public void windowClosing(WindowEvent e) {
-						int delete = JOptionPane.showConfirmDialog(null, "Vuoi chiudere il frame ? ","Attenzione !",JOptionPane.YES_NO_OPTION);	
+						int delete = JOptionPane.showConfirmDialog(null, "Sei Sicuro di voler terminare il gioco!? ","Attenzione !",JOptionPane.YES_NO_OPTION);	
 						if(delete==0){
 							System.exit(0);
 						}
